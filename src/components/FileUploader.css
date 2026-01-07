@@ -1,0 +1,22 @@
+.file-uploader {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.upload-btn {
+  padding: 1rem 3rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  background: #764ba2;
+  border: none;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
+}
+
+.file-hint {
+  color: #666;
+  font-size: 0.9rem;
+}
