@@ -5,9 +5,13 @@ import FileUploader from './components/FileUploader'
 import SongSelector from './components/SongSelector'
 import VoiceStyleSelector from './components/VoiceStyleSelector'
 import AudioPlayer from './components/AudioPlayer'
+import MusicTranslator from './components/MusicTranslator'
 import axios from 'axios'
 
+type TabType = 'tuning' | 'translation'
+
 function App() {
+  const [activeTab, setActiveTab] = useState<TabType>('tuning')
   const [audioFile, setAudioFile] = useState<File | null>(null)
   const [selectedSong, setSelectedSong] = useState<string>('')
   const [selectedStyle, setSelectedStyle] = useState<string>('')
@@ -60,57 +64,76 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>🎵 YourSong AI调音</h1>
-        <p>让AI帮你调出完美的声音</p>
+        <h1>🎵 YourSong AI音频工作室</h1>
+        <p>AI驱动的音频处理和音乐翻译</p>
       </header>
 
+      <div className="tabs">
+        <button
+          className={`tab ${activeTab === 'tuning' ? 'active' : ''}`}
+          onClick={() => setActiveTab('tuning')}
+        >
+          🎤 AI调音
+        </button>
+        <button
+          className={`tab ${activeTab === 'translation' ? 'active' : ''}`}
+          onClick={() => setActiveTab('translation')}
+        >
+          🌍 音乐翻译
+        </button>
+      </div>
+
       <div className="app-content">
-        <div className="input-section">
-          <div className="card">
-            <h2>1️⃣ 录制或上传音频</h2>
-            <AudioRecorder onRecorded={handleAudioRecorded} />
-            <div className="divider">或</div>
-            <FileUploader onFileUploaded={handleFileUploaded} />
-            {audioFile && (
-              <div className="file-info">
-                ✅ 已选择: {audioFile.name}
+        {activeTab === 'tuning' ? (
+          <div className="input-section">
+            <div className="card">
+              <h2>1️⃣ 录制或上传音频</h2>
+              <AudioRecorder onRecorded={handleAudioRecorded} />
+              <div className="divider">或</div>
+              <FileUploader onFileUploaded={handleFileUploaded} />
+              {audioFile && (
+                <div className="file-info">
+                  ✅ 已选择: {audioFile.name}
+                </div>
+              )}
+            </div>
+
+            <div className="card">
+              <h2>2️⃣ 选择歌曲（可选）</h2>
+              <SongSelector
+                selectedSong={selectedSong}
+                onSelectSong={setSelectedSong}
+              />
+            </div>
+
+            <div className="card">
+              <h2>3️⃣ 选择音色风格</h2>
+              <VoiceStyleSelector
+                selectedStyle={selectedStyle}
+                onSelectStyle={setSelectedStyle}
+              />
+            </div>
+
+            <button
+              className="process-btn"
+              onClick={handleProcess}
+              disabled={isProcessing || !audioFile}
+            >
+              {isProcessing ? '处理中...' : '🎯 开始AI调音'}
+            </button>
+
+            {error && <div className="error-message">{error}</div>}
+
+            {processedAudioUrl && (
+              <div className="card output-card">
+                <h2>✨ 处理结果</h2>
+                <AudioPlayer audioUrl={processedAudioUrl} />
               </div>
             )}
           </div>
-
+        ) : (
           <div className="card">
-            <h2>2️⃣ 选择歌曲（可选）</h2>
-            <SongSelector
-              selectedSong={selectedSong}
-              onSelectSong={setSelectedSong}
-            />
-          </div>
-
-          <div className="card">
-            <h2>3️⃣ 选择音色风格</h2>
-            <VoiceStyleSelector
-              selectedStyle={selectedStyle}
-              onSelectStyle={setSelectedStyle}
-            />
-          </div>
-
-          <button
-            className="process-btn"
-            onClick={handleProcess}
-            disabled={isProcessing || !audioFile}
-          >
-            {isProcessing ? '处理中...' : '🎯 开始AI调音'}
-          </button>
-
-          {error && <div className="error-message">{error}</div>}
-        </div>
-
-        {processedAudioUrl && (
-          <div className="output-section">
-            <div className="card">
-              <h2>✨ 处理结果</h2>
-              <AudioPlayer audioUrl={processedAudioUrl} />
-            </div>
+            <MusicTranslator />
           </div>
         )}
       </div>
