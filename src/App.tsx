@@ -6,6 +6,7 @@ import SongSelector from './components/SongSelector'
 import VoiceStyleSelector from './components/VoiceStyleSelector'
 import AudioPlayer from './components/AudioPlayer'
 import MusicTranslator from './components/MusicTranslator'
+import ApiStatus from './components/ApiStatus'
 import axios from 'axios'
 
 type TabType = 'tuning' | 'translation'
@@ -63,6 +64,8 @@ function App() {
 
   return (
     <div className="app">
+      <ApiStatus />
+
       <header className="app-header">
         <h1>🎵 YourSong AI音频工作室</h1>
         <p>AI驱动的音频处理和音乐翻译</p>

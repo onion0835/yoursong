@@ -29,6 +29,47 @@ translator = MusicTranslator()
 async def root():
     return {"message": "YourSong AI Tuner API is running"}
 
+@app.get("/api/status")
+async def get_status():
+    """获取API状态和可用功能"""
+    status = {
+        "service": "YourSong AI Audio Studio",
+        "version": "2.0.0",
+        "features": {
+            "ai_tuning": True,
+            "music_translation": True
+        }
+    }
+
+    # 检查商业API状态
+    if hasattr(translator, 'api_services') and translator.api_services:
+        api_services = translator.api_services
+        status["premium_apis"] = {
+            "elevenlabs": {
+                "available": bool(api_services.elevenlabs_api_key),
+                "description": "High-quality voice synthesis"
+            },
+            "openai_whisper": {
+                "available": bool(api_services.openai_api_key),
+                "description": "Cloud speech recognition"
+            },
+            "deepl": {
+                "available": bool(api_services.deepl_api_key),
+                "description": "Premium translation"
+            },
+            "lalal": {
+                "available": bool(api_services.lalal_api_key),
+                "description": "Professional vocal separation"
+            }
+        }
+    else:
+        status["premium_apis"] = {
+            "message": "Using free alternatives",
+            "upgrade": "Configure API keys in .env to use premium services"
+        }
+
+    return status
+
 @app.post("/api/process")
 async def process_audio(
     audio: UploadFile = File(...),
